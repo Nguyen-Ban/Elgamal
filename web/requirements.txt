@@ -1,0 +1,3 @@
+flask
+gmpy2
+sympy

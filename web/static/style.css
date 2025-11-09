@@ -1,0 +1,97 @@
+/* Dùng font Inter làm font chữ mặc định */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0f172a; /* gần với bg-gray-900 */
+    color: #e5e7eb; /* gần với text-gray-300 */
+}
+
+/* Hộp hiển thị khóa */
+.key-box {
+    background-color: #111827; /* bg-gray-900 */
+    padding: 1rem; /* p-4 */
+    border-radius: 0.5rem; /* rounded-lg */
+    border: 1px solid #374151; /* border-gray-700 */
+}
+
+/* Textarea hiển thị khóa (chỉ đọc) */
+.key-textarea {
+    width: 100%; /* w-full */
+    background-color: #1f2937; /* bg-gray-800 */
+    color: #d1d5db; /* text-gray-300 */
+    padding: 0.625rem; /* p-2.5 */
+    border-radius: 0.375rem; /* rounded-md */
+    margin-top: 0.5rem; /* mt-2 */
+    font-family: monospace; /* font-mono */
+    font-size: 0.875rem; /* text-sm */
+    border: 1px solid #4b5563; /* border-gray-600 */
+    resize: none; /* resize-none */
+}
+
+/* Label */
+.label-style {
+    display: block;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500; /* font-medium */
+    color: #d1d5db; /* text-gray-300 */
+    margin-bottom: 0.5rem; /* mb-2 */
+}
+
+/* Textarea nhập liệu */
+.input-textarea {
+    width: 100%;
+    padding: 0.625rem; /* p-2.5 */
+    background-color: #374151; /* bg-gray-700 */
+    border: 1px solid #4b5563; /* border-gray-600 */
+    border-radius: 0.5rem; /* rounded-lg */
+    color: #f3f4f6; /* text-gray-100 */
+    font-size: 0.9rem;
+    resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Placeholder color for inputs and textareas */
+.input-textarea::placeholder {
+    color: #9ca3af; /* placeholder-gray-400 */
+}
+.input-textarea::-webkit-input-placeholder {
+    color: #9ca3af;
+}
+.input-textarea::-moz-placeholder {
+    color: #9ca3af;
+}
+.input-textarea:-ms-input-placeholder {
+    color: #9ca3af;
+}
+.input-textarea::-ms-input-placeholder {
+    color: #9ca3af;
+}
+
+.input-textarea:focus {
+    border-color: #06b6d4; /* cyan-500 */
+    box-shadow: 0 0 0 1px #06b6d4;
+    outline: none;
+}
+
+/* Nút chính */
+.btn-primary {
+    width: 100%;
+    background-image: linear-gradient(to right, #a855f7, #4f46e5); /* from-purple-500 to-indigo-600 */
+    color: #ffffff;
+    font-weight: bold;
+    padding: 0.625rem 1rem; /* py-2.5 px-4 */
+    border: none;
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* shadow-md */
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-image: linear-gradient(to right, #9333ea, #4338ca); /* hover:from-purple-600 to-indigo-700 */
+    transform: scale(1.05);
+}
+
+/* (Tùy chọn) Reset mặc định cho textarea và button */
+textarea, button {
+    font-family: inherit;
+}

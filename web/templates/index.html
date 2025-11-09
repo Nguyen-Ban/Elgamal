@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElGamal Crypto & Signature Demo</title>
+    <!-- Tải Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Nạp file CSS và JS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans p-6 md:p-12">
+
+    <div class="max-w-6xl mx-auto space-y-12">
+        
+        <!-- TIÊU ĐỀ -->
+        <header class="text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+                ElGamal Crypto & Signature
+            </h1>
+            <p class="text-lg text-gray-400 mt-2">Giao diện web cho thư viện ElGamal</p>
+        </header>
+
+        <!-- Loading Spinner (ẩn) -->
+        <div id="loading-spinner" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+            <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-cyan-400"></div>
+            <span class="absolute text-lg font-medium">Đang xử lý...</span>
+        </div>
+
+        <!-- HỘP THÔNG BÁO -->
+        <div id="notification-box" class="hidden p-4 rounded-md mb-6 transition-all duration-300">
+            <span id="notification-message"></span>
+        </div>
+
+
+        <!-- PHẦN 1: TẠO KHÓA -->
+        <section class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-semibold mb-5 border-b border-gray-700 pb-3 text-cyan-300">
+                1. Tạo cặp khóa
+            </h2>
+            <p class="text-gray-400 mb-4">
+                Bấm nút bên dưới để tạo các cặp khóa ElGamal mới (cho cả Mã hóa và Chữ ký).
+            </p>
+            <button id="btn-generate-keys" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+                Tạo khóa mới
+            </button>
+
+            <!-- Nơi hiển thị khóa -->
+            <div id="key-display-area" class="mt-6 space-y-4 hidden">
+                <!-- Khóa Mã Hóa -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="key-box">
+                        <h3 class="font-semibold text-lg text-green-400">Khóa Mã Hóa (Public Key)</h3>
+                        <textarea id="key-encrypt-pub" class="key-textarea" readonly rows="6"></textarea>
+                    </div>
+                    <div class="key-box">
+                        <h3 class="font-semibold text-lg text-red-400">Khóa Giải Mã (Private Key)</h3>
+                        <textarea id="key-encrypt-priv" class="key-textarea" readonly rows="6"></textarea>
+                    </div>
+                </div>
+                <!-- Khóa Chữ Ký -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="key-box">
+                        <h3 class="font-semibold text-lg text-green-400">Khóa Xác Thực (Verifier Key)</h3>
+                        <textarea id="key-sign-verify" class="key-textarea" readonly rows="6"></textarea>
+                    </div>
+                    <div class="key-box">
+                        <h3 class="font-semibold text-lg text-red-400">Khóa Ký (Signer Key)</h3>
+                        <textarea id="key-sign-signer" class="key-textarea" readonly rows="6"></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PHẦN 2: MÃ HÓA & GIẢI MÃ -->
+        <section class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-semibold mb-5 border-b border-gray-700 pb-3 text-purple-300">
+                2. Mã hóa & Giải mã
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cột Mã Hóa -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-cyan-300">Mã hóa</h3>
+                    <div>
+                        <label for="encrypt-key" class="label-style">Dán Khóa Mã Hóa (Public Key JSON):</label>
+                        <textarea id="encrypt-key" class="input-textarea" rows="4" placeholder="dán JSON khóa công khai ở đây..."></textarea>
+                    </div>
+                    <div>
+                        <label for="encrypt-message" class="label-style">Bản rõ (Plaintext):</label>
+                        <textarea id="encrypt-message" class="input-textarea" rows="3" placeholder="Nhập tin nhắn cần mã hóa..."></textarea>
+                    </div>
+                    <button id="btn-encrypt" class="w-full btn-primary">Mã hóa</button>
+                    <div>
+                        <label for="encrypt-result" class="label-style">Bản mã (Ciphertext JSON):</label>
+                        <textarea id="encrypt-result" class="input-textarea bg-gray-900" rows="5" readonly placeholder="Kết quả mã hóa sẽ ở đây..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Cột Giải Mã -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-cyan-300">Giải mã</h3>
+                    <div>
+                        <label for="decrypt-key" class="label-style">Dán Khóa Giải Mã (Private Key JSON):</label>
+                        <textarea id="decrypt-key" class="input-textarea" rows="4" placeholder="dán JSON khóa bí mật ở đây..."></textarea>
+                    </div>
+                    <div>
+                        <label for="decrypt-ciphertext" class="label-style">Bản mã (Ciphertext JSON):</label>
+                        <textarea id="decrypt-ciphertext" class="input-textarea" rows="5" placeholder="Nhập bản mã JSON cần giải mã..."></textarea>
+                    </div>
+                    <button id="btn-decrypt" class="w-full btn-primary">Giải mã</button>
+                    <div>
+                        <label for="decrypt-result" class="label-style">Bản rõ (Plaintext):</label>
+                        <textarea id="decrypt-result" class="input-textarea bg-gray-900" rows="3" readonly placeholder="Kết quả giải mã sẽ ở đây..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- PHẦN 3: KÝ & XÁC THỰC -->
+        <section class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-semibold mb-5 border-b border-gray-700 pb-3 text-purple-300">
+                3. Ký & Xác thực chữ ký
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cột Ký -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-cyan-300">Tạo chữ ký</h3>
+                    <div>
+                        <label for="sign-key" class="label-style">Dán Khóa Ký (Signer Key JSON):</label>
+                        <textarea id="sign-key" class="input-textarea" rows="4" placeholder="dán JSON khóa ký ở đây..."></textarea>
+                    </div>
+                    <div>
+                        <label for="sign-message" class="label-style">Tin nhắn cần ký:</label>
+                        <textarea id="sign-message" class="input-textarea" rows="3" placeholder="Nhập tin nhắn..."></textarea>
+                    </div>
+                    <button id="btn-sign" class="w-full btn-primary">Tạo chữ ký</button>
+                    <div>
+                        <label for="sign-result" class="label-style">Chữ ký (JSON Array):</label>
+                        <textarea id="sign-result" class="input-textarea bg-gray-900" rows="4" readonly placeholder="Kết quả chữ ký sẽ ở đây..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Cột Xác thực -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-cyan-300">Xác thực chữ ký</h3>
+                    <div>
+                        <label for="verify-key" class="label-style">Dán Khóa Xác Thực (Verifier Key JSON):</label>
+                        <textarea id="verify-key" class="input-textarea" rows="4" placeholder="dán JSON khóa xác thực ở đây..."></textarea>
+                    </div>
+                    <div>
+                        <label for="verify-message" class="label-style">Tin nhắn gốc:</label>
+                        <textarea id="verify-message" class="input-textarea" rows="3" placeholder="Nhập tin nhắn..."></textarea>
+                    </div>
+                    <div>
+                        <label for="verify-signature" class="label-style">Chữ ký (JSON Array):</label>
+                        <textarea id="verify-signature" class="input-textarea" rows="4" placeholder="Nhập chữ ký JSON..."></textarea>
+                    </div>
+                    <button id="btn-verify" class="w-full btn-primary">Xác thực</button>
+                    <!-- Kết quả xác thực sẽ hiển thị qua Hộp Thông Báo -->
+                </div>
+            </div>
+        </section>
+
+    </div> <!-- Hết max-w-6xl -->
+
+</body>
+</html>
