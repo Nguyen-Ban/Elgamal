@@ -1,4 +1,3 @@
-# prime_generator.py
 import secrets
 import multiprocessing as mp
 import time
@@ -11,7 +10,7 @@ except ImportError:
 from functools import partial
 
 
-# ====== Sinh số nguyên tố cơ bản ======
+# Sinh số nguyên tố cơ bản
 def _generate_candidate(bits: int):
     """Sinh số lẻ ngẫu nhiên có đúng 'bits' bit."""
     n = secrets.randbits(bits)
@@ -36,7 +35,7 @@ def _worker(bits, safe=False, *args):
             return p
 
 
-# ====== Hàm chính ======
+# Hàm chính
 def generate_prime(bits=1024, safe=False, workers=4):
     """
     Sinh số nguyên tố 'bits'-bit nhanh bằng cách chạy song song nhiều tiến trình.
@@ -58,7 +57,7 @@ def generate_prime(bits=1024, safe=False, workers=4):
                 return p
 
 
-# ====== Kiểm tra chạy thử ======
+# Kiểm tra chạy thử
 if __name__ == "__main__":
 
     bits = 2000
@@ -69,5 +68,5 @@ if __name__ == "__main__":
     prime = generate_prime(bits=bits, safe=safe_mode, workers=4)
     t1 = time.time()
 
-    print(f"✅ Prime = {prime}")
-    print(f"⏱️ Thời gian: {t1 - t0:.3f} giây")
+    print(f"Prime = {prime}")
+    print(f"Thời gian: {t1 - t0:.3f} giây")

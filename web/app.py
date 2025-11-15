@@ -1,5 +1,6 @@
 import sys
 import os
+import gmpy2
 from flask import Flask, render_template, request, jsonify
 import logging
 
@@ -18,6 +19,10 @@ try:
         ElGamalSignatureSystem, ElGamalSignatureSignerKey, ElGamalSignatureVerifierKey
     )
     from crypto.pubkey.Plaintext import Plaintext
+    
+    from crypto.prime.generate_prime import generate_prime
+    from crypto.prime.is_prime import is_prime
+    from crypto.prime.prime_root import find_primitive_root
 except ImportError as e:
     print(f"LỖI QUAN TRỌNG: Không thể import thư viện crypto.")
     print(f"Đảm bảo bạn có cấu trúc thư mục đúng và các file __init__.py.")
@@ -94,42 +99,50 @@ def deserialize_ciphertext(data: list[dict]) -> ElGamalCiphertext:
 
 @app.route('/')
 def index():
-    """Phục vụ file HTML giao diện chính."""
     return render_template('index.html')
+
+@app.route('/tools')
+def tools_page():
+    return render_template('tools.html')
 
 # === API Endpoints ===
 
-@app.route('/api/generate-keys', methods=['POST'])
-def generate_keys():
-    """
-    API endpoint để tạo tất cả các cặp khóa (Mã hóa và Chữ ký).
-    """
-    app.logger.info("Yêu cầu /api/generate-keys")
+@app.route('/api/generate-encryption-keys', methods=['POST'])
+def generate_encryption_keys():
+    app.logger.info("Yêu cầu /api/generate-encryption-keys")
     try:
         # 1. Tạo khóa mã hóa
         pub_key, priv_key = crypto_system.generate_keypair()
-        
-        # 2. Tạo khóa chữ ký
-        signer_key, verifier_key = signature_system.generate_keypair()
         
         app.logger.info("Tạo khóa thành công.")
         return jsonify({
             "success": True,
             "encryptionPublicKey": serialize_public_key(pub_key),
             "encryptionPrivateKey": serialize_private_key(priv_key),
-            "signatureSignerKey": serialize_signer_key(signer_key),
-            "signatureVerifierKey": serialize_verifier_key(verifier_key),
         })
     except Exception as e:
         app.logger.error(f"Lỗi khi tạo khóa: {e}", exc_info=True)
         return jsonify({"success": False, "error": str(e)}), 500
 
+@app.route('/api/generate-signature-keys', methods=['POST'])
+def generate_signature_keys():
+    app.logger.info("Yêu cầu /api/generate-signature-keys")
+    try:
+        # 1. Tạo khóa chữ ký
+        signer_key, verifier_key = signature_system.generate_keypair()
+        
+        app.logger.info("Tạo khóa chữ ký thành công.")
+        return jsonify({
+            "success": True,
+            "signatureSignerKey": serialize_signer_key(signer_key),
+            "signatureVerifierKey": serialize_verifier_key(verifier_key),
+        })
+    except Exception as e:
+        app.logger.error(f"Lỗi khi tạo khóa chữ ký: {e}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route('/api/encrypt', methods=['POST'])
 def encrypt_message():
-    """
-    API endpoint để mã hóa tin nhắn.
-    Nhận: { "message": "...", "key": { ...public_key... } }
-    """
     app.logger.info("Yêu cầu /api/encrypt")
     try:
         data = request.json
@@ -153,10 +166,6 @@ def encrypt_message():
 
 @app.route('/api/decrypt', methods=['POST'])
 def decrypt_message():
-    """
-    API endpoint để giải mã tin nhắn.
-    Nhận: { "ciphertext": [ ... ], "key": { ...private_key... } }
-    """
     app.logger.info("Yêu cầu /api/decrypt")
     try:
         data = request.json
@@ -182,10 +191,6 @@ def decrypt_message():
 
 @app.route('/api/sign', methods=['POST'])
 def sign_message():
-    """
-    API endpoint để ký tin nhắn.
-    Nhận: { "message": "...", "key": { ...signer_key... } }
-    """
     app.logger.info("Yêu cầu /api/sign")
     try:
         data = request.json
@@ -209,10 +214,6 @@ def sign_message():
 
 @app.route('/api/verify', methods=['POST'])
 def verify_signature():
-    """
-    API endpoint để xác thực chữ ký.
-    Nhận: { "message": "...", "signature": [ ... ], "key": { ...verifier_key... } }
-    """
     app.logger.info("Yêu cầu /api/verify")
     try:
         data = request.json
@@ -239,6 +240,68 @@ def verify_signature():
         # Trả về isValid: False nếu có lỗi trong quá trình xác thực
         return jsonify({"success": True, "isValid": False, "error": "Lỗi khi xử lý xác thực."})
 
+@app.route('/api/tools/generate-prime', methods=['GET'])
+def tools_generate_prime():
+    app.logger.info("Yêu cầu /api/tools/generate-prime")
+    try:
+        bits = int(request.args.get('bits', '1024'))
+        safe_str = request.args.get('safe', 'false').lower()
+        safe = (safe_str == 'true')
+        
+        prime_number = generate_prime(bits=bits, safe=safe)
+        
+        app.logger.info(f"Sinh prime thành công: {prime_number}")
+        return jsonify({
+            "success": True,
+            "prime": str(prime_number)
+        })
+    except Exception as e:
+        app.logger.error(f"Lỗi khi sinh prime: {e}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+@app.route('/api/tools/check-prime', methods=['POST'])
+def tools_check_prime():
+    app.logger.info("Yêu cầu /api/tools/check-prime")
+    try:
+        data = request.json
+        number_str = data['number']
+        number = int(number_str)
+        
+        prime_status = is_prime(number)
+        
+        app.logger.info(f"Kiểm tra prime thành công: {number} là prime? {prime_status}")
+        return jsonify({
+            "success": True,
+            "isPrime": prime_status
+        })
+    except Exception as e:
+        app.logger.error(f"Lỗi khi kiểm tra prime: {e}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+@app.route('/api/tools/find-primitive-root', methods=['POST'])
+def tools_find_primitive_root():
+    app.logger.info("Yêu cầu /api/tools/find-primitive-root")
+    try:
+        data = request.json
+        p_str = data.get('p', '').strip()
+        safe = bool(data.get('safe', False))
+        if not p_str:
+            return jsonify({"success": False, "error": "Vui lòng nhập số nguyên tố p"}), 400
+
+        p = gmpy2.mpz(p_str)
+        if not (gmpy2.is_prime(p) > 0):
+             return jsonify({"success": False, "error": f"{p} không phải là số nguyên tố."}), 400
+        
+        g = find_primitive_root(p, safe=safe)
+        
+        return jsonify({
+            "success": True,
+            "g": str(g)
+        })
+    except ValueError as e: # Bắt lỗi (ví dụ: không phải safe prime)
+        return jsonify({"success": False, "error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 if __name__ == '__main__':
     """Chạy app ở chế độ debug."""
     app.run(debug=True, port=5000)

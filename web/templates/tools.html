@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ Crypto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script defer src="{{ url_for('static', filename='tools.js') }}"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans p-6 md:p-12">
+
+    <div class="max-w-6xl mx-auto space-y-12">
+        
+        <header class="container">
+            <h1>Công cụ Crypto</h1>
+            <p>Các chức năng phụ trợ</p>
+            <a href="/" class="tools-link">
+                &larr; Quay lại Trang chính (ElGamal)
+            </a>
+        </header>
+
+        <div id="loading-spinner" class="hidden">
+            <div class="loader"></div>
+        </div>
+
+        <div id="notification-box" class="hidden">
+            <span id="notification-message"></span>
+        </div>
+
+        <section>
+            <h2>1. Tạo số nguyên tố</h2>
+            <div class="key-row">
+                <div>
+                    <label for="prime-bits" class="label-style">Số bits:</label>
+                    <input type="number" id="prime-bits" class="input-textarea" value="512">
+                    
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="prime-safe">
+                        <label for="prime-safe">Tạo Safe Prime (Chậm)</label>
+                    </div>
+
+                    <button id="btn-generate-prime" class="btn-primary">Tạo Prime</button>
+                </div>
+                <div>
+                    <label for="prime-result" class="label-style">Kết quả (Số nguyên tố):</label>
+                    <textarea id="prime-result" class="input-textarea" rows="8" readonly></textarea>
+                    <div id="prime-time" class.="time-result"></div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. Kiểm tra số nguyên tố</h2>
+            <div class="key-row">
+                <div>
+                    <label for="check-number" class="label-style">Nhập số (Hệ 10):</label>
+                    <textarea id="check-number" class="input-textarea" rows="5"></textarea>
+                    <button id="btn-check-prime" class="btn-primary">Kiểm tra</button>
+                </div>
+                <div>
+                    <label class="label-style">Kết quả:</label>
+                    <div id="check-result" class="result-box">
+                        (Chưa kiểm tra)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. Tìm phần tử sinh (g)</h2>
+            <div class="key-row">
+                <div>
+                    <label for="root-p" class="label-style">Nhập số nguyên tố (p):</label>
+                    <textarea id="root-p" class="input-textarea" rows="5"></textarea>
+                    
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="root-safe">
+                        <label for="root-safe">p là Safe Prime (Tìm g nhanh)</label>
+                    </div>
+                    
+                    <button id="btn-find-root" class="btn-primary">Tìm g</button>
+                </div>
+                <div>
+                    <label for="root-result" class="label-style">Kết quả (g):</label>
+                    <textarea id="root-result" class="input-textarea" rows="2" readonly></textarea>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

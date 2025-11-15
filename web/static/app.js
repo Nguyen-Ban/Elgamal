@@ -2,37 +2,51 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // === Lấy các phần tử DOM ===
-    const btnGenerateKeys = document.getElementById('btn-generate-keys');
+    const btnGenerateEncryption = document.getElementById('btn-generate-encryption');
+    const btnGenerateSignature = document.getElementById('btn-generate-signature');
     const keyDisplayArea = document.getElementById('key-display-area');
     
-    // Khóa mã hóa
-    const keyEncryptPub = document.getElementById('key-encrypt-pub');
-    const keyEncryptPriv = document.getElementById('key-encrypt-priv');
-    // Khóa ký
-    const keySignVerify = document.getElementById('key-sign-verify');
-    const keySignSigner = document.getElementById('key-sign-signer');
+    // Phần 1: Hiển thị khóa
+    const keyEncryptPubP = document.getElementById('key-encrypt-pub-p');
+    const keyEncryptPubG = document.getElementById('key-encrypt-pub-g');
+    const keyEncryptPubBeta = document.getElementById('key-encrypt-pub-beta');
+    const keyEncryptPrivP = document.getElementById('key-encrypt-priv-p');
+    const keyEncryptPrivA = document.getElementById('key-encrypt-priv-a');
+    const keyVerifyP = document.getElementById('key-verify-p');
+    const keyVerifyG = document.getElementById('key-verify-g');
+    const keyVerifyBeta = document.getElementById('key-verify-beta');
+    const keySignP = document.getElementById('key-sign-p');
+    const keySignG = document.getElementById('key-sign-g');
+    const keySignA = document.getElementById('key-sign-a');
 
-    // Mã hóa
+    // Phần 2: Mã hóa
     const btnEncrypt = document.getElementById('btn-encrypt');
-    const encryptKey = document.getElementById('encrypt-key');
+    const encryptKeyP = document.getElementById('encrypt-key-p');
+    const encryptKeyG = document.getElementById('encrypt-key-g');
+    const encryptKeyBeta = document.getElementById('encrypt-key-beta');
     const encryptMessage = document.getElementById('encrypt-message');
     const encryptResult = document.getElementById('encrypt-result');
 
-    // Giải mã
+    // Phần 2: Giải mã
     const btnDecrypt = document.getElementById('btn-decrypt');
-    const decryptKey = document.getElementById('decrypt-key');
+    const decryptKeyP = document.getElementById('decrypt-key-p');
+    const decryptKeyA = document.getElementById('decrypt-key-a');
     const decryptCiphertext = document.getElementById('decrypt-ciphertext');
     const decryptResult = document.getElementById('decrypt-result');
 
-    // Ký
+    // Phần 3: Ký
     const btnSign = document.getElementById('btn-sign');
-    const signKey = document.getElementById('sign-key');
+    const signKeyP = document.getElementById('sign-key-p');
+    const signKeyG = document.getElementById('sign-key-g');
+    const signKeyA = document.getElementById('sign-key-a');
     const signMessage = document.getElementById('sign-message');
     const signResult = document.getElementById('sign-result');
 
-    // Xác thực
+    // Phần 3: Xác thực
     const btnVerify = document.getElementById('btn-verify');
-    const verifyKey = document.getElementById('verify-key');
+    const verifyKeyP = document.getElementById('verify-key-p');
+    const verifyKeyG = document.getElementById('verify-key-g');
+    const verifyKeyBeta = document.getElementById('verify-key-beta');
     const verifyMessage = document.getElementById('verify-message');
     const verifySignature = document.getElementById('verify-signature');
 
@@ -118,8 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Helper kiểm tra JSON hợp lệ
+     * Helper kiểm tra JSON hợp lệ (cho bản mã / chữ ký)
      * @param {string} str - Chuỗi JSON
+     * @param {string} fieldName - Tên trường để báo lỗi
      * @returns {object | null} - Object nếu hợp lệ, null nếu không
      */
     function parseJSON(str, fieldName) {
@@ -136,31 +151,70 @@ document.addEventListener('DOMContentLoaded', () => {
     // === Gắn Sự Kiện ===
 
     // 1. Tạo Khóa
-    btnGenerateKeys.addEventListener('click', async () => {
-        const data = await apiCall('/api/generate-keys', {});
+    btnGenerateEncryption.addEventListener('click', async () => {
+        const data = await apiCall('/api/generate-encryption-keys', {});
         
         if (data) {
-            // Hiển thị khóa (đã được định dạng JSON đẹp)
-            keyEncryptPub.value = JSON.stringify(data.encryptionPublicKey, null, 2);
-            keyEncryptPriv.value = JSON.stringify(data.encryptionPrivateKey, null, 2);
-            keySignVerify.value = JSON.stringify(data.signatureVerifierKey, null, 2);
-            keySignSigner.value = JSON.stringify(data.signatureSignerKey, null, 2);
+            // Hiển thị khóa (vào các ô input riêng lẻ)
+            
+            // Khóa mã hóa (Public)
+            keyEncryptPubP.value = data.encryptionPublicKey.p;
+            keyEncryptPubG.value = data.encryptionPublicKey.g;
+            keyEncryptPubBeta.value = data.encryptionPublicKey.beta;
+            
+            // Khóa giải mã (Private)
+            keyEncryptPrivP.value = data.encryptionPrivateKey.p;
+            keyEncryptPrivA.value = data.encryptionPrivateKey.a;
             
             keyDisplayArea.classList.remove('hidden');
             showNotification('Tạo khóa thành công!', 'success');
 
             // Tự động điền khóa vào các trường bên dưới
-            encryptKey.value = keyEncryptPub.value;
-            decryptKey.value = keyEncryptPriv.value;
-            signKey.value = keySignSigner.value;
-            verifyKey.value = keySignVerify.value;
+            // Mã hóa
+            encryptKeyP.value = data.encryptionPublicKey.p;
+            encryptKeyG.value = data.encryptionPublicKey.g;
+            encryptKeyBeta.value = data.encryptionPublicKey.beta;
+            
+            // Giải mã
+            decryptKeyP.value = data.encryptionPrivateKey.p;
+            decryptKeyA.value = data.encryptionPrivateKey.a;
+        }
+    });
+
+    btnGenerateSignature.addEventListener('click', async () => {
+        const data = await apiCall('/api/generate-signature-keys', {});
+        if (data) {
+            keyVerifyP.value = data.signatureVerifierKey.p;
+            keyVerifyG.value = data.signatureVerifierKey.g;
+            keyVerifyBeta.value = data.signatureVerifierKey.beta;
+
+            keySignP.value = data.signatureSignerKey.p;
+            keySignG.value = data.signatureSignerKey.g;
+            keySignA.value = data.signatureSignerKey.a;
+            keyDisplayArea.classList.remove('hidden');
+            showNotification('Tạo khóa chữ ký thành công!', 'success');
+
+            signKeyP.value = data.signatureSignerKey.p;
+            signKeyG.value = data.signatureSignerKey.g;
+            signKeyA.value = data.signatureSignerKey.a;
+            verifyKeyP.value = data.signatureVerifierKey.p;
+            verifyKeyG.value = data.signatureVerifierKey.g;
+            verifyKeyBeta.value = data.signatureVerifierKey.beta;
         }
     });
 
     // 2. Mã Hóa
     btnEncrypt.addEventListener('click', async () => {
-        const key = parseJSON(encryptKey.value, 'Khóa Mã Hóa');
-        if (!key) return;
+        const key = {
+            p: encryptKeyP.value,
+            g: encryptKeyG.value,
+            beta: encryptKeyBeta.value
+        };
+        
+        if (!key.p || !key.g || !key.beta) {
+            showNotification('Vui lòng nhập đủ (p, g, beta) của Khóa Công Khai.', 'error');
+            return;
+        }
 
         const message = encryptMessage.value;
         if (!message) {
@@ -179,8 +233,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Giải Mã
     btnDecrypt.addEventListener('click', async () => {
-        const key = parseJSON(decryptKey.value, 'Khóa Giải Mã');
-        if (!key) return;
+        const key = {
+            p: decryptKeyP.value,
+            a: decryptKeyA.value
+        };
+        
+        if (!key.p || !key.a) {
+            showNotification('Vui lòng nhập đủ (p, a) của Khóa Bí Mật.', 'error');
+            return;
+        }
 
         const ciphertext = parseJSON(decryptCiphertext.value, 'Bản Mã');
         if (!ciphertext) return;
@@ -190,15 +251,22 @@ document.addEventListener('DOMContentLoaded', () => {
             decryptResult.value = data.message;
             showNotification('Giải mã thành công!', 'success');
         } else {
-            // apiCall đã hiển thị lỗi, nhưng chúng ta có thể xóa kết quả
             decryptResult.value = 'GIẢI MÃ THẤT BẠI';
         }
     });
 
     // 4. Ký
     btnSign.addEventListener('click', async () => {
-        const key = parseJSON(signKey.value, 'Khóa Ký');
-        if (!key) return;
+        const key = {
+            p: signKeyP.value,
+            g: signKeyG.value,
+            a: signKeyA.value
+        };
+
+        if (!key.p || !key.g || !key.a) {
+            showNotification('Vui lòng nhập đủ (p, g, a) của Khóa Ký.', 'error');
+            return;
+        }
         
         const message = signMessage.value;
         if (!message) {
@@ -219,8 +287,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 5. Xác thực
     btnVerify.addEventListener('click', async () => {
-        const key = parseJSON(verifyKey.value, 'Khóa Xác Thực');
-        if (!key) return;
+        const key = {
+            p: verifyKeyP.value,
+            g: verifyKeyG.value,
+            beta: verifyKeyBeta.value
+        };
+        
+        if (!key.p || !key.g || !key.beta) {
+            showNotification('Vui lòng nhập đủ (p, g, beta) của Khóa Xác Thực.', 'error');
+            return;
+        }
         
         const message = verifyMessage.value;
         if (!message) {

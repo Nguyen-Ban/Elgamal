@@ -1,97 +1,299 @@
-/* Dùng font Inter làm font chữ mặc định */
+/* static/style.css (Phiên bản cập nhật) */
+
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #0f172a; /* gần với bg-gray-900 */
-    color: #e5e7eb; /* gần với text-gray-300 */
+    background-color: #0f172a; /* Màu nền chính (xanh đậm) */
+    color: #e5e7eb; /* Màu chữ chính (xám nhạt) */
+    margin: 0;
+    padding: 2rem;
 }
 
-/* Hộp hiển thị khóa */
-.key-box {
-    background-color: #111827; /* bg-gray-900 */
-    padding: 1rem; /* p-4 */
-    border-radius: 0.5rem; /* rounded-lg */
-    border: 1px solid #374151; /* border-gray-700 */
+.container {
+    max-width: 1000px;
+    margin: auto;
 }
 
-/* Textarea hiển thị khóa (chỉ đọc) */
-.key-textarea {
-    width: 100%; /* w-full */
-    background-color: #1f2937; /* bg-gray-800 */
-    color: #d1d5db; /* text-gray-300 */
-    padding: 0.625rem; /* p-2.5 */
-    border-radius: 0.375rem; /* rounded-md */
-    margin-top: 0.5rem; /* mt-2 */
-    font-family: monospace; /* font-mono */
-    font-size: 0.875rem; /* text-sm */
-    border: 1px solid #4b5563; /* border-gray-600 */
-    resize: none; /* resize-none */
+header {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
-/* Label */
-.label-style {
-    display: block;
-    font-size: 0.875rem; /* text-sm */
-    font-weight: 500; /* font-medium */
-    color: #d1d5db; /* text-gray-300 */
-    margin-bottom: 0.5rem; /* mb-2 */
+h1 {
+    font-size: 2.5rem;
+    /* Hiệu ứng gradient cho tiêu đề */
+    background: linear-gradient(to right, #22d3ee, #9333ea);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* Textarea nhập liệu */
+section {
+    background-color: #1e293b; /* Màu nền các hộp (section) */
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+    color: #7dd3fc; /* Màu tiêu đề section (xanh nhạt) */
+    border-bottom: 1px solid #334155; /* Đường gạch chân */
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Dùng cho layout 2 cột ở Phần 2 và Phần 3 */
+.key-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem; /* Tăng khoảng cách một chút */
+}
+
+/* Định dạng chung cho các ô textarea (Bản rõ, Bản mã, Kết quả) */
 .input-textarea {
     width: 100%;
-    padding: 0.625rem; /* p-2.5 */
-    background-color: #374151; /* bg-gray-700 */
-    border: 1px solid #4b5563; /* border-gray-600 */
-    border-radius: 0.5rem; /* rounded-lg */
-    color: #f3f4f6; /* text-gray-100 */
+    background-color: #374151; /* Màu nền ô input */
+    color: #f3f4f6; /* Màu chữ trong ô input */
+    padding: 0.625rem;
+    border: 1px solid #4b5563;
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+    font-family: monospace; /* Dùng font mono cho dễ nhìn */
     font-size: 0.9rem;
-    resize: vertical;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical; /* Cho phép kéo dãn chiều dọc */
+    box-sizing: border-box; /* Đảm bảo padding không làm hỏng layout */
 }
 
-/* Placeholder color for inputs and textareas */
-.input-textarea::placeholder {
-    color: #9ca3af; /* placeholder-gray-400 */
-}
-.input-textarea::-webkit-input-placeholder {
-    color: #9ca3af;
-}
-.input-textarea::-moz-placeholder {
-    color: #9ca3af;
-}
-.input-textarea:-ms-input-placeholder {
-    color: #9ca3af;
-}
-.input-textarea::-ms-input-placeholder {
-    color: #9ca3af;
-}
-
+/* Hiệu ứng khi focus vào ô input/textarea */
 .input-textarea:focus {
-    border-color: #06b6d4; /* cyan-500 */
-    box-shadow: 0 0 0 1px #06b6d4;
     outline: none;
+    border-color: #06b6d4; /* Viền màu xanh khi focus */
+    box-shadow: 0 0 0 1px #06b6d4;
 }
 
-/* Nút chính */
+/* Định dạng chung cho các nhãn (label) */
+.label-style {
+    display: block;
+    margin-top: 0.75rem; /* Tăng khoảng cách một chút */
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* Nút bấm chính */
 .btn-primary {
+    display: block;
     width: 100%;
-    background-image: linear-gradient(to right, #a855f7, #4f46e5); /* from-purple-500 to-indigo-600 */
-    color: #ffffff;
+    background-image: linear-gradient(to right, #8b5cf6, #4f46e5); /* Gradient */
+    color: white;
     font-weight: bold;
-    padding: 0.625rem 1rem; /* py-2.5 px-4 */
+    padding: 0.75rem;
     border: none;
-    border-radius: 0.5rem; /* rounded-lg */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* shadow-md */
-    transition: all 0.3s ease;
+    border-radius: 0.5rem;
     cursor: pointer;
+    transition: 0.3s ease-out; /* Hiệu ứng chuyển động */
+    margin-top: 1rem; /* Tăng khoảng cách */
 }
 
+/* Hiệu ứng khi di chuột qua nút */
 .btn-primary:hover {
-    background-image: linear-gradient(to right, #9333ea, #4338ca); /* hover:from-purple-600 to-indigo-700 */
-    transform: scale(1.05);
+    background-image: linear-gradient(to right, #7e22ce, #3730a3);
+    transform: scale(1.02); /* Phóng to nhẹ */
 }
 
-/* (Tùy chọn) Reset mặc định cho textarea và button */
-textarea, button {
-    font-family: inherit;
+/* === CÁC STYLE MỚI CHO Ô INPUT KHÓA === */
+
+/* Dùng cho các ô input CHỈ ĐỌC (p, g...) trong Phần 1 (Tạo khóa) */
+.key-input {
+    width: 100%;
+    background-color: #374151;
+    color: #f3f4f6;
+    padding: 0.625rem;
+    border: 1px solid #4b5563;
+    border-radius: 0.5rem;
+    font-family: monospace;
+    font-size: 0.9rem;
+    opacity: 0.7; /* Làm mờ đi vì là readonly */
+    cursor: not-allowed;
+    box-sizing: border-box;
+}
+
+/* Hộp chứa 1 nhóm khóa (p, g, beta...) trong Phần 1 */
+.key-group {
+    background-color: #111827; /* Nền tối hơn */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #374151;
+}
+
+.key-group h3 {
+    margin: 0 0 0.75rem 0;
+    color: #9ca3af; /* Màu xám */
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Dùng cho 1 dòng (ví dụ: 'p: [input]') trong Phần 1 */
+.key-part {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.key-part label {
+    font-weight: 500;
+    font-family: monospace;
+    color: #e5e7eb; /* Sáng hơn */
+    min-width: 45px; /* Căn chỉnh các label (p, g, a...) */
+    text-align: right;
+}
+
+/* Dùng cho các ô input (p, g...) trong Phần 2 và 3 */
+.key-part-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.key-part-input label {
+    font-weight: 500;
+    font-family: monospace;
+    color: #9ca3af; /* Màu xám */
+    min-width: 45px;
+    text-align: right;
+}
+/* Áp dụng style .input-textarea cho các ô này nhưng bỏ margin-top */
+.key-part-input .input-textarea {
+    margin-top: 0;
+    flex: 1; /* Cho input chiếm hết phần còn lại */
+}
+
+
+/* === TIỆN ÍCH (Spinner, Thông báo) === */
+
+.hidden {
+    display: none;
+}
+
+/* Loading Spinner */
+.loader {
+    /* Style cho spinner, ví dụ: */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    border: 4px solid #334155;
+    border-top-color: #22d3ee; /* Màu xanh */
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    animation: spin 1s linear infinite;
+    z-index: 100;
+}
+/* Bỏ class 'hidden' của spinner */
+#loading-spinner.hidden .loader {
+    display: none;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Hộp thông báo (dùng class được thêm từ JS) */
+.bg-green-800 { background-color: #166534; }
+.text-green-100 { color: #dcfce7; }
+.bg-red-800 { background-color: #991b1b; }
+.text-red-100 { color: #fee2e2; }
+.bg-blue-800 { background-color: #1e40af; }
+.text-blue-100 { color: #dbeafe; }
+
+.p-4 { padding: 1rem; }
+.rounded-md { border-radius: 0.375rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.transition-all { transition-property: all; }
+.duration-300 { transition-duration: 300ms; }
+
+/* === Thêm vào cuối file style.css === */
+
+/* Link đi đến trang công cụ */
+.tools-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #334155;
+    color: #cffafe;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+.tools-link:hover {
+    background-color: #475569;
+}
+
+/* Nút bấm phụ (màu khác) */
+.btn-secondary {
+    display: block;
+    width: 100%;
+    background-image: linear-gradient(to right, #0e7490, #06b6d4);
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 0.75rem;
+}
+.btn-secondary:hover {
+    background-image: linear-gradient(to right, #155e75, #0891b2);
+    transform: scale(1.02);
+}
+/* Dùng cho 2 nút tạo khóa */
+.button-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Style cho trang công cụ */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 0.5rem;
+}
+.checkbox-container input[type="checkbox"] {
+    width: 1.15rem;
+    height: 1.15rem;
+    accent-color: #22d3ee;
+}
+.checkbox-container label {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+}
+
+.time-result {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+.result-box {
+    background-color: #374151;
+    color: #f3f4f6;
+    padding: 1rem;
+    border: 1px solid #4b5563;
+    border-radius: 0.5rem;
+    font-family: monospace;
+    font-size: 1rem;
+    min-height: 50px;
+}
+.result-box.success {
+    border-color: #10b981;
+    color: #a7f3d0;
+}
+.result-box.error {
+    border-color: #f43f5e;
+    color: #fecdd3;
 }

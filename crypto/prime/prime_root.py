@@ -160,4 +160,4 @@ if __name__ == "__main__":
     print("🔹 Tìm primitive root ...")
     t0 = time.time()
     g = find_primitive_root(p, safe=safe_mode)
-    print(f"✅ g = {g}\n⏱️ Thời gian: {time.time()-t0:.2f}s")
+    print(f"g = {g}\nThời gian: {time.time()-t0:.2f}s")
