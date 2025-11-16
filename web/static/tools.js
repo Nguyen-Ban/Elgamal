@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingSpinner = document.getElementById('loading-spinner');
     const notificationBox = document.getElementById('notification-box');
     const notificationMessage = document.getElementById('notification-message');
+    const btnCopy = document.getElementById('btn-copy');
 
     // 1. Generate Prime
     const primeBits = document.getElementById('prime-bits');
@@ -71,10 +72,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Gắn Sự Kiện
 
+    if (btnCopy) {
+        btnCopy.addEventListener('click', () => {
+            const textToCopy = primeResult.value;
+
+            if (!textToCopy) {
+                showNotification('Không có số nguyên tố nào để sao chép.', 'info');
+                return;
+            }
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showNotification('Đã sao chép số nguyên tố vào clipboard!', 'success');
+            }).catch(err => {
+                console.error('Lỗi khi sao chép:', err);
+                showNotification('Lỗi khi sao chép. Vui lòng thử thủ công.', 'error');
+                
+                primeResult.select();
+                document.execCommand('copy');
+            });
+        });
+    }
+
     // 1. Tạo số nguyên tố
     btnGeneratePrime.addEventListener('click', async () => {
         const bits = parseInt(primeBits.value, 10);
         const safe = primeSafe.checked;
+        console.log(`Tạo prime với bits=${bits}, safe=${safe}`);
         
         if (safe && bits < 512) {
              showNotification('Tạo Safe Prime nên dùng số bits lớn (>= 512) để đảm bảo thành công.', 'info');
@@ -87,12 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (data) {
             primeResult.value = data.prime;
-            primeTime.textContent = `Thời gian tạo: ${data.time} giây`;
+            // primeTime.textContent = `Thời gian tạo: ${data.time} giây`;
             showNotification('Tạo số nguyên tố thành công!', 'success');
-            // Tự động điền vào các ô bên dưới
-            checkNumber.value = data.prime;
-            rootP.value = data.prime;
-            rootSafe.checked = safe; // Đồng bộ trạng thái safe
         } else {
              primeResult.value = "Thất bại. Xem thông báo lỗi.";
         }
@@ -113,10 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (data) {
             if (data.isPrime) {
-                checkResult.textContent = `Hợp lệ: ${data.number} LÀ số nguyên tố.`;
+                checkResult.textContent = `Hợp lệ: LÀ số nguyên tố.`;
                 checkResult.classList.add('success');
             } else {
-                checkResult.textContent = `Không hợp lệ: ${data.number} KHÔNG phải là số nguyên tố.`;
+                checkResult.textContent = `Không hợp lệ: KHÔNG phải là số nguyên tố.`;
                 checkResult.classList.add('error');
             }
         } else {
@@ -135,13 +154,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         rootResult.value = "Đang tìm...";
-        const data = await apiCall('/api/tools/find-root', { p, safe });
+        const data = await apiCall('/api/tools/find-primitive-root', { p, safe });
 
         if (data) {
             rootResult.value = data.g;
             showNotification('Tìm thấy g thành công!', 'success');
         } else {
-            rootResult.value = "Thất bại. (p không phải SNT hoặc không phải Safe Prime?)";
+            let errorMessage = "p không phải số nguyên tố";
+        
+        if (data && data.error) {
+            errorMessage = data.error; 
+        } else if (data) {
+            errorMessage = "Yêu cầu không thành công.";
+        }
+        
+        rootResult.value = "Thất bại: " + errorMessage;
+        showNotification('Lỗi tìm kiếm: ' + errorMessage, 'error');
         }
     });
 });

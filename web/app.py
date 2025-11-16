@@ -240,20 +240,20 @@ def verify_signature():
         # Trả về isValid: False nếu có lỗi trong quá trình xác thực
         return jsonify({"success": True, "isValid": False, "error": "Lỗi khi xử lý xác thực."})
 
-@app.route('/api/tools/generate-prime', methods=['GET'])
+@app.route('/api/tools/generate-prime', methods=['POST'])
 def tools_generate_prime():
     app.logger.info("Yêu cầu /api/tools/generate-prime")
     try:
-        bits = int(request.args.get('bits', '1024'))
-        safe_str = request.args.get('safe', 'false').lower()
-        safe = (safe_str == 'true')
-        
+        data = request.json
+        bits = int(data.get('bits', 1024))
+        safe = data.get('safe', False)
+
         prime_number = generate_prime(bits=bits, safe=safe)
         
         app.logger.info(f"Sinh prime thành công: {prime_number}")
         return jsonify({
             "success": True,
-            "prime": str(prime_number)
+            "prime": str(prime_number),
         })
     except Exception as e:
         app.logger.error(f"Lỗi khi sinh prime: {e}", exc_info=True)
@@ -283,7 +283,7 @@ def tools_find_primitive_root():
     app.logger.info("Yêu cầu /api/tools/find-primitive-root")
     try:
         data = request.json
-        p_str = data.get('p', '').strip()
+        p_str = data.get('p', '')
         safe = bool(data.get('safe', False))
         if not p_str:
             return jsonify({"success": False, "error": "Vui lòng nhập số nguyên tố p"}), 400
@@ -298,7 +298,7 @@ def tools_find_primitive_root():
             "success": True,
             "g": str(g)
         })
-    except ValueError as e: # Bắt lỗi (ví dụ: không phải safe prime)
+    except ValueError as e:
         return jsonify({"success": False, "error": str(e)}), 400
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500

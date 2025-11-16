@@ -45,7 +45,11 @@
                     <button id="btn-generate-prime" class="btn-primary">Tạo Prime</button>
                 </div>
                 <div>
-                    <label for="prime-result" class="label-style">Kết quả (Số nguyên tố):</label>
+                    <div style="position: relative;">
+                        <label for="prime-result" class="label-style">Kết quả (Số nguyên tố):</label>
+                        <button id="btn-copy" class="absolute top-2 right-2 text-gray-400 hover:text-cyan-400 p-1 rounded transition-colors" title="Sao chép số nguyên tố">
+                            &#x274f; </button>
+                    </div>
                     <textarea id="prime-result" class="input-textarea" rows="8" readonly></textarea>
                     <div id="prime-time" class.="time-result"></div>
                 </div>
@@ -60,11 +64,9 @@
                     <textarea id="check-number" class="input-textarea" rows="5"></textarea>
                     <button id="btn-check-prime" class="btn-primary">Kiểm tra</button>
                 </div>
-                <div>
+                <div class="align-stretch">
                     <label class="label-style">Kết quả:</label>
-                    <div id="check-result" class="result-box">
-                        (Chưa kiểm tra)
-                    </div>
+                    <textarea id="check-result" class="input-textarea" rows="2" readonly></textarea>
                 </div>
             </div>
         </section>

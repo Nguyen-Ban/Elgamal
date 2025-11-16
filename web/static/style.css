@@ -297,3 +297,30 @@ h2 {
     border-color: #f43f5e;
     color: #fecdd3;
 }
+
+.align-stretch {
+    display: flex; /* Dùng Flexbox */
+    flex-direction: column; /* Sắp xếp các mục theo chiều dọc */
+}
+
+.align-stretch .result-box {
+    box-sizing: border-box; 
+    margin-bottom: 0; /* Đảm bảo không có margin dưới thừa */
+}
+
+.absolute { position: absolute; }
+.top-2 { top: 0.5rem; }
+.right-2 { right: 0.5rem; }
+.p-1 { padding: 0.25rem; }
+.rounded { border-radius: 0.25rem; }
+/* Đảm bảo nút này không làm hỏng layout */
+#btn-copy {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 2rem;
+    line-height: 1; /* Căn giữa icon */
+}
+#btn-copy:focus {
+    outline: none;
+}
