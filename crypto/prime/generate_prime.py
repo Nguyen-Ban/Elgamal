@@ -60,7 +60,7 @@ def generate_prime(bits=1024, safe=False, workers=4):
 # Kiểm tra chạy thử
 if __name__ == "__main__":
 
-    bits = 2000
+    bits = 1024
     safe_mode = True
     print(f"🔹 Sinh {'safe ' if safe_mode else ''}prime {bits}-bit ...")
 

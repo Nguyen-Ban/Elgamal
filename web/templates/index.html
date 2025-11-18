@@ -138,8 +138,10 @@
 
                     <button id="btn-encrypt" class="btn-primary">Mã hóa</button>
 
-                    <label for="encrypt-result" class="label-style">Kết quả (JSON):</label>
-                    <textarea id="encrypt-result" class="input-textarea" rows="5" readonly></textarea>
+                    <label class="label-style">Kết quả (Danh sách y1):</label>
+                    <textarea id="encrypt-result-y1" class="input-textarea" rows="4" readonly></textarea>
+                    <label class="label-style">Kết quả (Danh sách y2):</label>
+                    <textarea id="encrypt-result-y2" class="input-textarea" rows="4" readonly></textarea>
                 </div>
 
                 <div>
@@ -154,8 +156,10 @@
                         <input type="text" id="decrypt-key-a" class="input-textarea">
                     </div>
 
-                    <label for="decrypt-ciphertext" class="label-style">Bản mã (JSON):</label>
-                    <textarea id="decrypt-ciphertext" class="input-textarea" rows="5"></textarea>
+                    <label for="decrypt-ciphertext-y1" class="label-style">Bản mã (Danh sách y1):</label>
+                    <textarea id="decrypt-ciphertext-y1" class="input-textarea" rows="4"></textarea>
+                    <label for="decrypt-ciphertext-y2" class="label-style">Bản mã (Danh sách y2):</label>
+                    <textarea id="decrypt-ciphertext-y2" class="input-textarea" rows="4"></textarea>
 
                     <button id="btn-decrypt" class="btn-primary">Giải mã</button>
 
@@ -190,8 +194,10 @@
 
                     <button id="btn-sign" class="btn-primary">Tạo chữ ký</button>
 
-                    <label for="sign-result" class="label-style">Chữ ký (JSON):</label>
-                    <textarea id="sign-result" class="input-textarea" rows="4" readonly></textarea>
+                    <label for="sign-result-gamma" class="label-style">Chữ ký (Danh sách Gamma):</label>
+                    <textarea id="sign-result-gamma" class="input-textarea" rows="4" readonly></textarea>
+                    <label for="sign-result-delta" class="label-style">Chữ ký (Danh sách Delta):</label>
+                    <textarea id="sign-result-delta" class="input-textarea" rows="4" readonly></textarea>
                 </div>
 
                 <div>
@@ -213,8 +219,10 @@
                     <label for="verify-message" class="label-style">Tin nhắn:</label>
                     <textarea id="verify-message" class="input-textarea" rows="3"></textarea>
 
-                    <label for="verify-signature" class="label-style">Chữ ký (JSON):</label>
-                    <textarea id="verify-signature" class="input-textarea" rows="4"></textarea>
+                    <label for="verify-signature-gamma" class="label-style">Chữ ký (Danh sách Gamma):</label>
+                    <textarea id="verify-signature-gamma" class="input-textarea" rows="4"></textarea>
+                    <label for="verify-signature-delta" class="label-style">Chữ ký (Danh sách Delta):</label>
+                    <textarea id="verify-signature-delta" class="input-textarea" rows="4"></textarea>
 
                     <button id="btn-verify" class="btn-primary">Xác thực</button>
                 </div>

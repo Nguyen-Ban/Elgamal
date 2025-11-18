@@ -25,13 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const encryptKeyG = document.getElementById('encrypt-key-g');
     const encryptKeyBeta = document.getElementById('encrypt-key-beta');
     const encryptMessage = document.getElementById('encrypt-message');
-    const encryptResult = document.getElementById('encrypt-result');
+    // const encryptResult = document.getElementById('encrypt-result');
+    const encryptResultY1 = document.getElementById('encrypt-result-y1');
+    const encryptResultY2 = document.getElementById('encrypt-result-y2');
 
     // Phần 2: Giải mã
     const btnDecrypt = document.getElementById('btn-decrypt');
     const decryptKeyP = document.getElementById('decrypt-key-p');
     const decryptKeyA = document.getElementById('decrypt-key-a');
-    const decryptCiphertext = document.getElementById('decrypt-ciphertext');
+    // const decryptCiphertext = document.getElementById('decrypt-ciphertext');
+    const decryptCiphertextY1 = document.getElementById('decrypt-ciphertext-y1');
+    const decryptCiphertextY2 = document.getElementById('decrypt-ciphertext-y2');
     const decryptResult = document.getElementById('decrypt-result');
 
     // Phần 3: Ký
@@ -40,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const signKeyG = document.getElementById('sign-key-g');
     const signKeyA = document.getElementById('sign-key-a');
     const signMessage = document.getElementById('sign-message');
-    const signResult = document.getElementById('sign-result');
+    const signResultGamma = document.getElementById('sign-result-gamma');
+    const signResultDelta = document.getElementById('sign-result-delta');
 
     // Phần 3: Xác thực
     const btnVerify = document.getElementById('btn-verify');
@@ -48,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const verifyKeyG = document.getElementById('verify-key-g');
     const verifyKeyBeta = document.getElementById('verify-key-beta');
     const verifyMessage = document.getElementById('verify-message');
-    const verifySignature = document.getElementById('verify-signature');
+    const verifySignatureGamma = document.getElementById('verify-signature-gamma');
+    const verifySignatureDelta = document.getElementById('verify-signature-delta');
 
     // Tiện ích
     const loadingSpinner = document.getElementById('loading-spinner');
@@ -224,10 +230,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await apiCall('/api/encrypt', { message, key });
         if (data) {
-            encryptResult.value = JSON.stringify(data.ciphertext, null, 2);
+            const y1_list = data.ciphertext.map(pair => pair.y1);
+            const y2_list = data.ciphertext.map(pair => pair.y2);
+
+            // Hiển thị mỗi giá trị trên một dòng
+            encryptResultY1.value = y1_list.join('\n');
+            encryptResultY2.value = y2_list.join('\n');
             showNotification('Mã hóa thành công.', 'success');
+
             // Tự động điền bản mã vào trường giải mã
-            decryptCiphertext.value = encryptResult.value;
+            decryptCiphertextY1.value = encryptResultY1.value;
+            decryptCiphertextY2.value = encryptResultY2.value;
         }
     });
 
@@ -243,8 +256,31 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const ciphertext = parseJSON(decryptCiphertext.value, 'Bản Mã');
-        if (!ciphertext) return;
+        const y1_text = decryptCiphertextY1.value;
+        const y2_text = decryptCiphertextY2.value;
+
+        if (!y1_text || !y2_text) {
+            showNotification('Vui lòng nhập đủ danh sách y1 và y2.', 'error');
+            return;
+        }
+
+            // Tách chuỗi bằng ký tự xuống dòng, lọc bỏ các dòng rỗng
+            const y1_list = y1_text.split('\n').filter(Boolean);
+            const y2_list = y2_text.split('\n').filter(Boolean);
+
+        if (y1_list.length !== y2_list.length) {
+            showNotification('Lỗi: Số lượng y1 và y2 không khớp nhau.', 'error');
+            return;
+        }
+
+        // Tái tạo lại cấu trúc list[dict] mà backend mong đợi
+        const ciphertext = [];
+        for (let i = 0; i < y1_list.length; i++) {
+        ciphertext.push({
+            y1: y1_list[i].trim(), // .trim() để xóa khoảng trắng thừa
+            y2: y2_list[i].trim()
+        });
+        }
 
         const data = await apiCall('/api/decrypt', { ciphertext, key });
         if (data) {
@@ -276,12 +312,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await apiCall('/api/sign', { message, key });
         if (data) {
-            signResult.value = JSON.stringify(data.signature, null, 2);
+            const gamma_list = [];
+            const delta_list = [];
+
+            for (let i = 0; i < data.signature.length; i += 2) {
+                if(data.signature[i]) gamma_list.push(data.signature[i]);
+                if(data.signature[i+1]) delta_list.push(data.signature[i+1]);
+            }
+
+            signResultGamma.value = gamma_list.join('\n');
+            signResultDelta.value = delta_list.join('\n');
             showNotification('Tạo chữ ký thành công.', 'success');
             
             // Tự động điền tin nhắn và chữ ký vào trường xác thực
             verifyMessage.value = message;
-            verifySignature.value = signResult.value;
+            verifySignatureGamma.value = signResultGamma.value;
+            verifySignatureDelta.value = signResultDelta.value;
         }
     });
 
@@ -304,16 +350,61 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const signature = parseJSON(verifySignature.value, 'Chữ Ký');
-        if (!signature) return;
+        const gamma_text = verifySignatureGamma.value;
+        const delta_text = verifySignatureDelta.value;
+
+        if (!gamma_text || !delta_text) {
+            showNotification('Vui lòng nhập đủ danh sách Gamma và Delta của chữ ký.', 'error');
+            return;
+        }
+
+        // Tách chuỗi bằng ký tự xuống dòng, lọc bỏ các dòng rỗng
+        const gamma_list = gamma_text.split('\n').filter(Boolean);
+        const delta_list = delta_text.split('\n').filter(Boolean);
+
+        if (gamma_list.length !== delta_list.length) {
+            showNotification('Lỗi: Số lượng Gamma và Delta không khớp nhau.', 'error');
+            return;
+        }
+
+        // Tái tạo lại cấu trúc list[dict] mà backend mong đợi
+        const signature = [];
+        for (let i = 0; i < gamma_list.length; i++) {
+            signature.push(gamma_list[i].trim()); // gamma
+            signature.push(delta_list[i].trim()); // delta
+        }
+
+        if (signature.length === 0) {
+            showNotification('Lỗi: Chữ ký không được để trống.', 'error');
+            return;
+        }
 
         const data = await apiCall('/api/verify', { message, signature, key });
         if (data) {
-            if (data.isValid) {
-                showNotification('XÁC THỰC THÀNH CÔNG: Chữ ký hợp lệ!', 'success');
-            } else {
-                showNotification('XÁC THỰC THẤT BẠI: Chữ ký KHÔNG hợp lệ!', 'error');
-            }
+            let verifyResultBox = document.getElementById('verify-result');
+        if (!verifyResultBox) {
+            const resultBox = document.createElement('div');
+            resultBox.id = 'verify-result';
+            resultBox.className = 'mt-4 p-3 rounded-md text-center font-semibold';
+            verifyMessage.parentNode.appendChild(resultBox); // chèn sau vùng message
+            verifyResultBox = resultBox;
+        }
+
+        if (data.isValid) {
+            verifyResultBox.textContent = 'XÁC THỰC HỢP LỆ';
+            verifyResultBox.className = 'mt-4 p-3 rounded-md text-center font-semibold bg-green-800 text-green-100';
+            showNotification('XÁC THỰC THÀNH CÔNG: Chữ ký hợp lệ!', 'success');
+        } else {
+            verifyResultBox.textContent = 'XÁC THỰC KHÔNG HỢP LỆ';
+            verifyResultBox.className = 'mt-4 p-3 rounded-md text-center font-semibold bg-red-800 text-red-100';
+            showNotification('XÁC THỰC THẤT BẠI: Chữ ký KHÔNG hợp lệ!', 'error');
+        }
+
+        verifyResultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+            verifyResultBox.style.opacity = '0';
+            setTimeout(() => verifyResultBox.classList.add('hidden'), 700); // đợi hiệu ứng fade out
+        }, 5000);
         }
     });
 

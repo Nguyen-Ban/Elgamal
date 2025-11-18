@@ -113,7 +113,6 @@ h2 {
     font-family: monospace;
     font-size: 0.9rem;
     opacity: 0.7; /* Làm mờ đi vì là readonly */
-    cursor: not-allowed;
     box-sizing: border-box;
 }
 
