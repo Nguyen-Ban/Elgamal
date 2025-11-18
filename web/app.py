@@ -112,7 +112,9 @@ def generate_encryption_keys():
     app.logger.info("Yêu cầu /api/generate-encryption-keys")
     try:
         # 1. Tạo khóa mã hóa
-        pub_key, priv_key = crypto_system.generate_keypair()
+        data = request.json
+        bits = int(data.get('bits', 512))
+        pub_key, priv_key = crypto_system.generate_keypair(bits)
         
         app.logger.info("Tạo khóa thành công.")
         return jsonify({
@@ -129,7 +131,9 @@ def generate_signature_keys():
     app.logger.info("Yêu cầu /api/generate-signature-keys")
     try:
         # 1. Tạo khóa chữ ký
-        signer_key, verifier_key = signature_system.generate_keypair()
+        data = request.json
+        bits = int(data.get('bits', 512))
+        signer_key, verifier_key = signature_system.generate_keypair(bits)
         
         app.logger.info("Tạo khóa chữ ký thành công.")
         return jsonify({

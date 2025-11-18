@@ -40,6 +40,16 @@
             <p>
                 Bấm nút bên dưới để tạo các cặp khóa ElGamal mới (cho cả Mã hóa và Chữ ký).
             </p>
+            <div class="key-row" style="margin-bottom: 1rem;">
+                <div>
+                    <label for="bits-encryption" class="label-style">Số bit (Mã hóa):</label>
+                    <input type="number" id="bits-encryption" class="input-textarea" value="512" style="margin-top: 0.5rem;">
+                </div>
+                <div>
+                    <label for="bits-signature" class="label-style">Số bit (Chữ ký):</label>
+                    <input type="number" id="bits-signature" class="input-textarea" value="512" style="margin-top: 0.5rem;">
+                </div>
+            </div>
             <div class="button-row">
                 <button id="btn-generate-encryption" class="btn-secondary">
                     Tạo khóa Mã hóa

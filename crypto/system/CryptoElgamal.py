@@ -51,8 +51,8 @@ class ElGamalCryptoPrivateKey:
         return f"ElGamalCryptoPrivateKey(p={self.p}, a={self.a})"
     
 class ElGamalCryptoSystem(CryptoSystem[ElGamalCryptoPublicKey, ElGamalCryptoPrivateKey, ElGamalCiphertext]):
-    def generate_keypair(self):
-        public_key_dict, private_key_dict = ElGamal_generate_keys(CRYPTO_BITS)
+    def generate_keypair(self, bits: int = CRYPTO_BITS):
+        public_key_dict, private_key_dict = ElGamal_generate_keys(bits)
         public_key = ElGamalCryptoPublicKey(**public_key_dict)
         private_key = ElGamalCryptoPrivateKey(**private_key_dict)
         return public_key, private_key

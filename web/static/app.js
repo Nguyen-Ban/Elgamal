@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnGenerateEncryption = document.getElementById('btn-generate-encryption');
     const btnGenerateSignature = document.getElementById('btn-generate-signature');
     const keyDisplayArea = document.getElementById('key-display-area');
+    const bitsEncryptionInput = document.getElementById('bits-encryption');
+    const bitsSignatureInput = document.getElementById('bits-signature');
     
     // Phần 1: Hiển thị khóa
     const keyEncryptPubP = document.getElementById('key-encrypt-pub-p');
@@ -158,7 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. Tạo Khóa
     btnGenerateEncryption.addEventListener('click', async () => {
-        const data = await apiCall('/api/generate-encryption-keys', {});
+        const bits = parseInt(bitsEncryptionInput.value, 10);
+        if (isNaN(bits) || bits < 256) {
+            showNotification('Vui lòng nhập số bit hợp lệ (ít nhất 256).', 'error');
+            return;
+        }
+        const data = await apiCall('/api/generate-encryption-keys', {bits: bits});
         
         if (data) {
             // Hiển thị khóa (vào các ô input riêng lẻ)
@@ -188,7 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btnGenerateSignature.addEventListener('click', async () => {
-        const data = await apiCall('/api/generate-signature-keys', {});
+        const bits = parseInt(bitsSignatureInput.value, 10);
+        if (isNaN(bits) || bits < 256) {
+            showNotification('Vui lòng nhập số bit hợp lệ (ít nhất 256).', 'error');
+            return;
+        }
+        const data = await apiCall('/api/generate-signature-keys', {bits: bits});
         if (data) {
             keyVerifyP.value = data.signatureVerifierKey.p;
             keyVerifyG.value = data.signatureVerifierKey.g;

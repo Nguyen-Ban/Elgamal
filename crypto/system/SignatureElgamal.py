@@ -24,8 +24,8 @@ class ElGamalSignatureVerifierKey:
         return f"ElGamalSignatureVerifierKey(p={self.p}, g={self.g}, beta={self.beta})"
     
 class ElGamalSignatureSystem(SignatureSystem[ElGamalSignatureVerifierKey, ElGamalSignatureSignerKey]):
-    def generate_keypair(self) -> tuple[ElGamalSignatureSignerKey, ElGamalSignatureVerifierKey]:
-        public_key_dict, private_key_dict = ElGamal_generate_keys(SIGNATURE_BITS)
+    def generate_keypair(self, bits: int = SIGNATURE_BITS) -> tuple[ElGamalSignatureSignerKey, ElGamalSignatureVerifierKey]:
+        public_key_dict, private_key_dict = ElGamal_generate_keys(bits)
         verifier_key = ElGamalSignatureVerifierKey(**public_key_dict)
         signer_key = ElGamalSignatureSignerKey(
             p=private_key_dict["p"],
